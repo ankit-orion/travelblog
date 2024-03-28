@@ -3,14 +3,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 const userSchema = new Schema(
     {
-        username:{
-            trype:string,
-            required:true,
-            unique:true,
-            lowercase:true,
-            trim:true,
-            index:true,
-        },
         email:{
             type:string,
             required:true,
@@ -26,10 +18,6 @@ const userSchema = new Schema(
             index:true,
         },
         avatar:{
-            type:string,
-            required:true,
-        },
-        coverImage:{
             type:string,
             required:true,
         },
