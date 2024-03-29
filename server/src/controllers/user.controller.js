@@ -1,9 +1,9 @@
 import {asyncHandler} from '../../utils/asyncHandler.js' ;
 import {User} from '../models/user.model.js';
 import {ApiError} from '../../utils/ApiError.js';
-import { jwt } from 'jsonwebtoken';
-import { mongoose } from 'mongoose';
+import  jwt  from 'jsonwebtoken';
 import {ApiResponse} from '../../utils/ApiResponse.js';
+import {uploadOnCloudinary} from '../../utils/cloudinary.service.js';
 const generateAccessAndRefreshTokens = async(userId) => {
     
     try {
@@ -41,17 +41,17 @@ const registerUser = asyncHandler( async (req, res) => {
     // return res
 
 
-    const {fullName, email, username, password } = req.body
+    const {fullName, email, password ,bio} = req.body
     //console.log("email: ", email);
 
     if (
-        [fullName, email, username, password].some((field) => field?.trim() === "")
+        [fullName, email, password].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "All fields are required")
     }
 
     const existedUser = await User.findOne({
-        $or: [{ username }, { email }]
+        $or: [ { email }]
     })
 
     if (existedUser) {
@@ -62,10 +62,10 @@ const registerUser = asyncHandler( async (req, res) => {
     const avatarLocalPath = req.files?.avatar && req.files.avatar[0]?.path;
     //const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
-    let coverImageLocalPath;
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-        coverImageLocalPath = req.files.coverImage[0].path
-    }
+    // let coverImageLocalPath;
+    // if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    //     coverImageLocalPath = req.files.coverImage[0].path
+    // }
     
 
     if (!avatarLocalPath) {
@@ -73,7 +73,7 @@ const registerUser = asyncHandler( async (req, res) => {
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+    // const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
     if (!avatar) {
         throw new ApiError(400, "Avatar file is required")
@@ -83,10 +83,10 @@ const registerUser = asyncHandler( async (req, res) => {
     const user = await User.create({
         fullName,
         avatar: avatar.url,
-        coverImage: coverImage?.url || "",
         email, 
         password,
-        username: username.toLowerCase()
+        bio
+        
     })
     // here we are removing password and refreshToken 
     const createdUser = await User.findById(user._id).select(
