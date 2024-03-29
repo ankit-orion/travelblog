@@ -36,6 +36,31 @@ const Register = () => {
         method: "POST",
         body: formDataToSend,
       });
+      if (response.ok) {
+        // here if we are done with login we want the user to get logged in and redisrected to the home page
+        const loginResponse = await fetch("http://localhost:8000/api/v1/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+        });
+        if(loginResponse.ok){
+          const data = await loginResponse.json();
+          document.cookie = `accessToken=${data.data.acessToken}`;path="/";
+          document.cookie = `refreshToken=${data.data.refreshToken}`;path="/";
+          window.location.href = "/";
+        }else{
+          const error = await loginResponse.json();
+          alert(error.message);
+        }
+      } else {
+        toast.error('User Already Exists! Please Login.')
+        console.log("Error:", response.statusText);
+      }
     } catch (error) {
       console.log(error);
     }

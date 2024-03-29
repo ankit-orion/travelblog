@@ -114,33 +114,26 @@ const loginUser = asyncHandler(async (req, res) =>{
 
     // here we are extracting the values from the req body
 
-    const {email, username, password} = req.body
-    // console.log(email);
+    const {email, password} = req.body
+    console.log(email);
 
     // check if all the fields are give or not
 
-    if (!username && !email) {
-        throw new ApiError(400, "username or email is required")
+    if (!email) {
+        throw new ApiError(400, "email is required")
     }
-    
-    // Here is an alternative of above code based on logic discussed in video:
-    // if (!(username || email)) {
-    //     throw new ApiError(400, "username or email is required")
-        
-    // }
 
-    const user = await User.findOne({
-        $or: [{username}, {email}]
-    })
-    // console.log(user);
+
+    const user = await User.findOne({email})
+    console.log(user);
     if (!user) {
         throw new ApiError(404, "User doesn't exist")
     }
     // now we have to check for the password so for that reason
     // we have already created an method in which we have to pass the user password
     // this method is created in the user model
-    console.log(password);
-    console.log(user);
+    // console.log(password);
+    // console.log(user);
     const isPasswordValid = await user.isPasswordCorrect(password)
     console.log(isPasswordValid);
     if (!isPasswordValid) {
