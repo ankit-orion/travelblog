@@ -196,8 +196,7 @@ const Register = () => {
                   </div>
               </div>
               <button
-                type="button"
-                onClick={handleSubmit}
+                type="submit"
                 className="w-full px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
               >
                 Signup
