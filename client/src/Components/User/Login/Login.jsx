@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Form, Link } from 'react-router-dom';
 import { useState } from 'react';
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,21 +8,22 @@ const Login = () => {
   });
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(!formData.email || !formData.password){
       alert("Please fill all the fields");
       return;
     }
+    const formDataToSend = new FormData();
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
     try {
       const response = await fetch("http://localhost:8000/api/v1/users/login", {
         method: "POST",
         credentials: "include", // it includes the cookies
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
       console.log(response);
       if (response.ok) {

@@ -21,6 +21,7 @@ const Register = () => {
     console.log(e.target.files[0]);
     setFormData({ ...formData, avatar: e.target.files[0] });
   }
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -50,16 +51,16 @@ const Register = () => {
         });
         if(loginResponse.ok){
           const data = await loginResponse.json();
-          document.cookie = `accessToken=${data.data.acessToken}`;path="/";
-          document.cookie = `refreshToken=${data.data.refreshToken}`;path="/";
+          document.cookie = `accessToken=${data.data.accessToken}; path=/`;
+          document.cookie = `refreshToken=${data.data.refreshToken}; path=/`;          
           window.location.href = "/";
         }else{
           const error = await loginResponse.json();
           alert(error.message);
         }
       } else {
-        toast.error('User Already Exists! Please Login.')
-        console.log("Error:", response.statusText);
+       // if there is an error in the registration process
+        console.log(response);
       }
     } catch (error) {
       console.log(error);
